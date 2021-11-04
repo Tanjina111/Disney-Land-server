@@ -27,14 +27,14 @@ async function run() {
     
         console.log('connected');
 
-        //GET API
+        //Get API
         app.get('/services', async (req, res) => {
             const cursor = serviceCollection.find({});
             const services = await cursor.toArray();
             res.send(services);
         })
 
-        // Get data by keys
+        // Get Data By Keys
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
@@ -42,6 +42,7 @@ async function run() {
             res.send(services);
         });
 
+        // Get Data By Email
         app.get("/orders", async (req, res) => {
             const mail = req.query.email;
             console.log(mail);
@@ -74,15 +75,7 @@ async function run() {
             res.send(manageOrder);
         });
 
-        //Single User Orders*
-        // app.get('/orders/:id', async(req, res) => {
-        //     const result = await orderCollection.find({email: req.params.email}).toArray();
-        //     res.send(result);
-        // })
-
-        
-
-        // Delete
+        // Delete Order
         app.delete("/orders/:id", async (req, res) => {
             const orderId = req.params.id;
             const query = { _id: ObjectId(orderId) };
@@ -90,30 +83,20 @@ async function run() {
             res.json(orderDelete);
         });
 
-        // // Update
-        // app.put("/orders/:id", async (req, res) => {
-        //     const updateId = req.params.id;
-        //     const updatedStatus = req.body;
-            
-        //     const filter = { _id: ObjectId(updateId) };
-        //     const options = { upsert: true };
-        //     const updateDoc = {
-        //         $set: {
-        //             status: updatedStatus.status,
-        //         },
-        //     };
-        //     const approvedres = await orderCollection.updateOne(filter, updateDoc, options);
-        //     res.json(approvedres);
-        // });
-
-        // 
-        // app.post("/placeorders", async (req, res) => {
-        //     const orders = req.body;
-        //     const result = await orderCollection.insertOne(orders);
-        //     res.json(result);
-        // });
-
-             
+        // // Update Order
+        app.put('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateStatus = req.body;
+            const filter = { _id: ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    status: updateStatus.status,
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc);
+            res.json(result)
+        })
+       
     }
     finally {
         // await client.close();
